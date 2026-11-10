@@ -1,0 +1,102 @@
+#codigo modificado
+
+def limpiar_y_validar_datos(coleccion_cruda):
+    """
+    Filtra valores nulos y aplica criterios de validez.
+    Retorna una nueva lista con valores numéricos válidos.
+    """
+    lista_limpia = []
+
+    for elemento in coleccion_cruda:
+
+        # Verificar que el elemento no sea nulo
+        if elemento is not None:
+
+            try:
+                elemento = float(elemento)
+
+                # Criterio de negocio: excluir -999 y valores negativos
+                if elemento != -999 and elemento >= 0:
+                    lista_limpia.append(elemento)
+
+            except (ValueError, TypeError):
+                continue
+
+    return lista_limpia
+
+
+# --- Módulo de Estadísticas Descriptivas ---
+
+def calcular_media(datos_numericos):
+    """Calcula la media aritmética."""
+    conteo = len(datos_numericos)
+
+    if conteo == 0:
+        return None
+
+    suma_total = sum(datos_numericos)
+
+    return suma_total / conteo
+
+
+def calcular_varianza_poblacional(datos_numericos, media):
+    """Calcula la varianza poblacional."""
+    conteo = len(datos_numericos)
+
+    if conteo == 0:
+        return None
+
+    suma_cuadraticos = sum((x - media) ** 2 for x in datos_numericos)
+
+    return suma_cuadraticos / conteo
+
+
+def calcular_desviacion_estandar(varianza):
+    """Calcula la desviación estándar."""
+    if varianza is None or varianza < 0:
+        return None
+
+    return varianza ** 0.5
+
+
+# --- Función Orquestadora Principal ---
+
+def generar_resumen_estadistico(datos_entrada):
+    """
+    Coordina la limpieza, los cálculos estadísticos
+    y el empaquetado de resultados.
+    """
+
+    datos_limpios = limpiar_y_validar_datos(datos_entrada)
+
+    if len(datos_limpios) == 0:
+        return None
+
+    media_val = calcular_media(datos_limpios)
+
+    varianza_val = calcular_varianza_poblacional(
+        datos_limpios, media_val
+    )
+
+    desviacion_val = calcular_desviacion_estandar(varianza_val)
+
+    # Empaquetar resultados en un diccionario
+    resultado = {
+        "media": media_val,
+        "varianza": varianza_val,
+        "desviacion_estandar": desviacion_val
+    }
+
+    return resultado
+
+
+# --- Punto de Ejecución del Script ---
+
+# Definición de datos crudos de prueba
+datos_XYZ = [12.5, -999, 15.0, None, 18.2, 20.1, -5, 14.8]
+
+# Invocación de la función principal
+resultado_final = generar_resumen_estadistico(datos_XYZ)
+
+# Mostrar resultados
+print("Resultado:", resultado_final)
